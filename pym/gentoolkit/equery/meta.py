@@ -176,26 +176,23 @@ def format_upstream(upstream):
 			idstr = "%s ID: %s" % (site, proj_id)
 			result.append(idstr)
 		return result
-
-	result = []
+    
+	result = [] 
+	_short_format = lambda x, y: format_line(x, y, " " * 13 )
+	def _format_all(arr_result, arr_format):
+		for format_item in arr_format:
+			for item in format_item[0]: 
+				arr_result.append(_short_format(item, format_item[1]))
+	
 	for up in upstream:
-		upmaints = format_maintainers(up.maintainers)
-		for upmaint in upmaints:
-			result.append(format_line(upmaint, "Maintainer:  ", " " * 13))
-
-		for upchange in up.changelogs:
-			result.append(format_line(upchange, "ChangeLog:   ", " " * 13))
-
-		updocs = _format_upstream_docs(up.docs)
-		for updoc in updocs:
-			result.append(format_line(updoc, "Docs:       ", " " * 13))
-
-		for upbug in up.bugtrackers:
-			result.append(format_line(upbug, "Bugs-to:     ", " " * 13))
-
-		upids = _format_upstream_ids(up.remoteids)
-		for upid in upids:
-			result.append(format_line(upid, "Remote-ID:   ", " " * 13))
+		format_data = (  
+					(format_maintainers(up.maintainers), "Maintainer:  "),
+					(up.changelogs, "ChangeLog:   "),
+					(_format_upstream_docs(up.docs), "Docs:       "),
+					(up.bugtrackers, "Bugs-to:     "),
+					(_format_upstream_ids(up.remoteids), "Remote-ID:   "),
+					)
+		_format_all(result, format_data)
 
 	return result
 
